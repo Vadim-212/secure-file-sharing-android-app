@@ -21,7 +21,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
+import com.google.gson.Gson
+import com.vadim212.securityfilesharingapp.data.FileKey
+import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import com.vadim212.securityfilesharingapp.data.repository.FileSharingRepository
+import com.vadim212.securityfilesharingapp.data.repository.UserPublicKeyRepository
 import com.vadim212.securityfilesharingapp.databinding.FragmentMainBinding
+import com.vadim212.securityfilesharingapp.domain.base.DefaultObserver
+import com.vadim212.securityfilesharingapp.domain.usecase.GetFileKey
+import com.vadim212.securityfilesharingapp.domain.usecase.GetUserPublicKey
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -33,9 +42,11 @@ import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.security.SecureRandom
 import java.security.Security
 import java.security.spec.KeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -48,6 +59,10 @@ class MainFragment : Fragment() {
     var binding: FragmentMainBinding? = null
     var filePickerUri: Uri? = null
     var contentResolver: ContentResolver? = null
+
+
+    var currentEncryptedFileName = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,6 +127,25 @@ class MainFragment : Fragment() {
                 decryptFile(SecretKeySpec(decodedKey, "AES"))
             }
         }
+
+
+
+        val fileSharingRepository = FileSharingRepository()
+        val getFileKey = GetFileKey(fileSharingRepository)
+
+        val userPublicKeyRepository = UserPublicKeyRepository()
+        val getUserPublicKey = GetUserPublicKey(userPublicKeyRepository)
+
+        binding?.buttonFragmentMainTestApi?.setOnClickListener {
+            getFileKey.execute(GetFileKeyObserver(), GetFileKey.Companion.Params.forFileKey("1233test","345test"))
+            getUserPublicKey.execute(GetUserPublicKeyObserver(), GetUserPublicKey.Companion.Params.forUserPublicKey("123test"))
+        }
+
+
+
+
+
+
     }
 
     fun openFile(pickerInitialUri: Uri) {
@@ -165,6 +199,13 @@ class MainFragment : Fragment() {
         return generator.generateKey()
     }
 
+    fun generateRandomInitializationVector(blockSize: Int): ByteArray {
+        val secureRandom = SecureRandom()
+        val iv = ByteArray(blockSize)
+        secureRandom.nextBytes(iv)
+        return iv
+    }
+
     fun asymmetricEncryption(dataBytes: ByteArray, publicKey: Key): String {
         val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
@@ -208,12 +249,15 @@ class MainFragment : Fragment() {
         //AES_256/CBC/PKCS5PADDING
 
         //val secretKey = createSymmetricKey()
-        val cipher = Cipher.getInstance("AES_256/CBC/PKCS5PADDING")
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, IvParameterSpec(ByteArray(16)))
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        val iv = generateRandomInitializationVector(cipher.blockSize)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, IvParameterSpec(iv))
+
         val bytes = readBytesFromUri(fileUri)
         val encodedBytes = cipher.doFinal(bytes)
 
-        val fileToWriteName = "encrypted_file.txt"
+        currentEncryptedFileName = UUID.randomUUID().toString().replace("-","") + "_" + Base64.encodeToString(iv, Base64.DEFAULT)
+        val fileToWriteName = currentEncryptedFileName//"encrypted_file.txt"
         val fileToWriteDir = ContextWrapper(context)
             .getDir("encryptedFiles", Context.MODE_PRIVATE)
         //
@@ -262,10 +306,14 @@ class MainFragment : Fragment() {
     fun decryptFile(secretKey: SecretKey) {
         //AES_256/CBC/PKCS5PADDING
 
-        val cipher = Cipher.getInstance("AES_256/CBC/PKCS5PADDING")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(ByteArray(16)))
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        //val iv = generateRandomInitializationVector(cipher.blockSize)
+        val iv = Base64.decode(currentEncryptedFileName.split("_").last(), Base64.DEFAULT)
 
-        val fileToReadName = "encrypted_file.txt"
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(iv))
+
+
+        val fileToReadName = currentEncryptedFileName//"encrypted_file.txt"
         val fileToReadDir = ContextWrapper(context)
             .getDir("encryptedFiles", Context.MODE_PRIVATE)
         //
@@ -378,6 +426,51 @@ class MainFragment : Fragment() {
                 }
                 Log.i("FILEOPENER metadata", "Size: $size")
             }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    class GetFileKeyObserver: DefaultObserver<FileKey>() {
+        override fun onNext(t: FileKey) {
+            Log.d("API_TESTING", "GetFileKeyObserver.onNext; $t")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d("API_TESTING", "GetFileKeyObserver.onError; $e")
+        }
+
+        override fun onComplete() {
+            Log.d("API_TESTING", "GetFileKeyObserver.onComplete")
+        }
+    }
+
+    class GetUserPublicKeyObserver: DefaultObserver<UserPublicKey>() {
+        override fun onNext(t: UserPublicKey) {
+            Log.d("API_TESTING", "GetUserPublicKeyObserver.onNext; $t")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d("API_TESTING", "GetUserPublicKeyObserver.onError; $e")
+        }
+
+        override fun onComplete() {
+            Log.d("API_TESTING", "GetUserPublicKeyObserver.onComplete")
         }
     }
 }
