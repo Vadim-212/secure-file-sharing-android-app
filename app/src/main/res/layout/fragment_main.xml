@@ -59,4 +59,33 @@
         android:id="@+id/button_fragment_main_test_api"
         android:text="Test api"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_fragment_main_unzip_files"
+        app:layout_constraintTop_toBottomOf="@+id/button_fragment_main_test_api"
+        android:layout_marginTop="25dp"
+        android:id="@+id/button_fragment_main_zip_files"
+        android:text="Zip files"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/button_fragment_main_zip_files"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_fragment_main_test_api"
+        android:layout_marginTop="25dp"
+        android:id="@+id/button_fragment_main_unzip_files"
+        android:text="Unzip files"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_fragment_main_unzip_files"
+        android:layout_marginTop="25dp"
+        android:id="@+id/textview_fragment_main_files_uri_list"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

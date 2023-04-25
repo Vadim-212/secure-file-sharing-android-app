@@ -8,57 +8,49 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.MasterKeys
-import com.google.gson.Gson
-import com.vadim212.securityfilesharingapp.data.FileKey
-import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import com.vadim212.securityfilesharingapp.data.entity.FileKeyEntity
+import com.vadim212.securityfilesharingapp.data.entity.UserPublicKeyEntity
 import com.vadim212.securityfilesharingapp.data.repository.FileSharingRepository
 import com.vadim212.securityfilesharingapp.data.repository.UserPublicKeyRepository
 import com.vadim212.securityfilesharingapp.databinding.FragmentMainBinding
 import com.vadim212.securityfilesharingapp.domain.base.DefaultObserver
+import com.vadim212.securityfilesharingapp.domain.usecase.DownloadFile
 import com.vadim212.securityfilesharingapp.domain.usecase.GetFileKey
 import com.vadim212.securityfilesharingapp.domain.usecase.GetUserPublicKey
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStreamReader
-import java.security.Key
-import java.security.KeyFactory
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.KeyStore
-import java.security.PrivateKey
-import java.security.PublicKey
-import java.security.SecureRandom
-import java.security.Security
-import java.security.spec.KeySpec
-import java.security.spec.X509EncodedKeySpec
-import java.util.UUID
+import com.vadim212.securityfilesharingapp.domain.usecase.ShareFile
+import okhttp3.ResponseBody
+import retrofit2.Response
+import java.io.*
+import java.security.*
+import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import javax.xml.parsers.DocumentBuilder
+import kotlin.collections.ArrayList
 
 
 class MainFragment : Fragment() {
     var binding: FragmentMainBinding? = null
     var filePickerUri: Uri? = null
     var contentResolver: ContentResolver? = null
+    var openFilePicker: ActivityResultLauncher<Intent>? = null
 
 
     var currentEncryptedFileName = ""
@@ -66,6 +58,35 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
+        openFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                if (data != null) {
+                    if (data.clipData != null) {
+                        val count = data.clipData!!.itemCount
+                        val uris: ArrayList<Uri> = arrayListOf()
+                        for (i in 0 until count) {
+                            val currentUri = data.clipData?.getItemAt(i)?.uri
+                            if (currentUri != null) {
+                                uris.add(currentUri)
+                            }
+                        }
+
+                        if (uris.isNotEmpty()) {
+                            binding?.textviewFragmentMainFilesUriList?.text =
+                                //uris.joinToString { str -> str.toFile().name }
+                                uris.joinToString { str -> str.path.toString() } +
+                                        File(uris[0].path).length().toString()
+                        }
+
+                    }
+                }
+            }
+        }
+
 
     }
 
@@ -130,42 +151,104 @@ class MainFragment : Fragment() {
 
 
 
+
+
+
         val fileSharingRepository = FileSharingRepository()
         val getFileKey = GetFileKey(fileSharingRepository)
 
         val userPublicKeyRepository = UserPublicKeyRepository()
         val getUserPublicKey = GetUserPublicKey(userPublicKeyRepository)
 
+        val shareFile = ShareFile(fileSharingRepository)
+        val downloadFile = DownloadFile(fileSharingRepository)
+
+        val fileToWriteDir = ContextWrapper(context)
+            .getDir("encryptedFiles", Context.MODE_PRIVATE)
+        val encryptedFiles = fileToWriteDir.listFiles()?.map { element -> element.path }
+        val zipPath = File(fileToWriteDir,"encryptedFiles.zip")
+        val unzipDirPath = File(fileToWriteDir, "unzippedFiles" + File.separator)
+
+        val downloadedFilesDir = ContextWrapper(context)
+            .getDir("downloadedFiles", Context.MODE_PRIVATE)
+
         binding?.buttonFragmentMainTestApi?.setOnClickListener {
-            getFileKey.execute(GetFileKeyObserver(), GetFileKey.Companion.Params.forFileKey("1233test","345test"))
-            getUserPublicKey.execute(GetUserPublicKeyObserver(), GetUserPublicKey.Companion.Params.forUserPublicKey("123test"))
+            //-//getFileKey.execute(GetFileKeyObserver(), GetFileKey.Companion.Params.forFileKey("123test","345test"))
+//            getUserPublicKey.execute(GetUserPublicKeyObserver(), GetUserPublicKey.Companion.Params.forUserPublicKey("123test"))
+
+
+            val multipart = shareFile.fileToMultipartBodyPart(if (zipPath.exists())
+            {
+                zipPath
+            } else {
+                File(encryptedFiles?.get(0)!!)
+            })
+            shareFile.execute(ShareFileObserver(), ShareFile.Companion.Params.forShareFile(
+                shareFile.strToRequestBody("123test"),
+                shareFile.strToRequestBody("345test"),
+                multipart,
+                shareFile.strToRequestBody("asdfasfsadfsdf")))
+
+            //-//downloadFile.execute(DownloadFileObserver(downloadedFilesDir), DownloadFile.Companion.Params.forDownloadFile("123test","345test"))
         }
 
 
+        binding?.buttonFragmentMainZipFiles?.setOnClickListener {
+            if (encryptedFiles != null) {
+                if (zipPath.exists()) {
+                    zipPath.delete()
+                }
+                zipFiles(encryptedFiles, zipPath)
+            }
 
+        }
+        binding?.buttonFragmentMainUnzipFiles?.setOnClickListener {
+            if (unzipDirPath.exists()) {
+                unzipDirPath.deleteRecursively()
+            }
+            unzipFiles(File(fileToWriteDir,"encryptedFiles.zip"), unzipDirPath.path)
+        }
 
 
 
     }
 
     fun openFile(pickerInitialUri: Uri) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-//            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-            putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
-        }
-        startActivityForResult(intent, 1)
-    }
+//        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+////            addCategory(Intent.CATEGORY_OPENABLE)
+//            type = "*/*"
+//            putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+//        }
+        //startActivityForResult(intent, 1)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            Log.d("FILEOPENER", data.toString())
-            data?.data?.also { uri ->
-                Log.d("FILEOPENER", uri.toString())
-                filePickerUri = uri
+
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            type = "*/*"
+
+        }
+
+
+        openFilePicker!!.launch(intent)
+        /*
+        val openFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
             }
         }
+        openFilePicker.launch(intent)
+        */
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+//            Log.d("FILEOPENER", data.toString())
+//            data?.data?.also { uri ->
+//                Log.d("FILEOPENER", uri.toString())
+//                filePickerUri = uri
+//            }
+//        }
+//    }
 
     fun createAsymmetricKeyPair(): KeyPair {
         val generator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore")
@@ -325,7 +408,8 @@ class MainFragment : Fragment() {
 
         val fileToWriteDir = ContextWrapper(context)
             .getDir("decryptedFiles", Context.MODE_PRIVATE)
-        val decryptedFile = File(fileToWriteDir, "decrypted_file.gif")
+        //val decryptedFile = File(fileToWriteDir, "decrypted_file.gif")
+        val decryptedFile = File(fileToWriteDir, currentEncryptedFileName.split("_").first())
         decryptedFile.outputStream().apply {
             write(decodedBytes)
             flush()
@@ -429,6 +513,75 @@ class MainFragment : Fragment() {
         }
     }
 
+    @Throws(IOException::class)
+    fun zipFiles(files: List<String>, archiveSavePath: File) {
+        val BUFFER_SIZE = 6 * 1024
+        var origin: BufferedInputStream? = null
+        val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(archiveSavePath)))
+        try {
+            val data = ByteArray(BUFFER_SIZE)
+            for (i in files.indices) {
+                val fi = FileInputStream(files[i])
+                origin = BufferedInputStream(fi, BUFFER_SIZE)
+                try {
+                    val entry = ZipEntry(files[i].substring(files[i].lastIndexOf("/") + 1))
+                    out.putNextEntry(entry)
+                    var count = origin.read(data, 0, BUFFER_SIZE)
+                    while (count != -1) {
+                        out.write(data, 0, count)
+                        count = origin.read(data, 0, BUFFER_SIZE)
+                    }
+                } finally {
+                    origin.close()
+                }
+            }
+        } finally {
+            out.close()
+        }
+    }
+
+    @Throws(IOException::class)
+    fun unzipFiles(archivePath: File, saveDir: String) {
+        val BUFFER_SIZE = 6 * 1024
+        try {
+            val f = File(saveDir)
+            if (!f.isDirectory) {
+                f.mkdirs()
+            }
+            val zin = ZipInputStream(FileInputStream(archivePath))
+            try {
+                var ze = zin.nextEntry
+                while (ze != null) {
+                    val path = saveDir + File.separator + ze.name
+                    if (ze.isDirectory) {
+                        val unzipFile = File(path)
+                        if(!unzipFile.isDirectory) {
+                            unzipFile.mkdirs()
+                        }
+                    } else {
+                        val fout = FileOutputStream(path, false)
+                        try {
+                            var c = zin.read()
+                            while (c != -1) {
+                                fout.write(c)
+                                c = zin.read()
+                            }
+                            zin.closeEntry()
+                        } finally {
+                            fout.close()
+                        }
+                    }
+                    ze = zin.nextEntry
+                }
+
+            } finally {
+                zin.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("ZIP", "Unzip exception", e)
+        }
+    }
 
 
 
@@ -446,8 +599,10 @@ class MainFragment : Fragment() {
 
 
 
-    class GetFileKeyObserver: DefaultObserver<FileKey>() {
-        override fun onNext(t: FileKey) {
+
+
+    class GetFileKeyObserver: DefaultObserver<FileKeyEntity>() {
+        override fun onNext(t: FileKeyEntity) {
             Log.d("API_TESTING", "GetFileKeyObserver.onNext; $t")
         }
 
@@ -460,8 +615,8 @@ class MainFragment : Fragment() {
         }
     }
 
-    class GetUserPublicKeyObserver: DefaultObserver<UserPublicKey>() {
-        override fun onNext(t: UserPublicKey) {
+    class GetUserPublicKeyObserver: DefaultObserver<UserPublicKeyEntity>() {
+        override fun onNext(t: UserPublicKeyEntity) {
             Log.d("API_TESTING", "GetUserPublicKeyObserver.onNext; $t")
         }
 
@@ -471,6 +626,51 @@ class MainFragment : Fragment() {
 
         override fun onComplete() {
             Log.d("API_TESTING", "GetUserPublicKeyObserver.onComplete")
+        }
+    }
+
+    class ShareFileObserver: DefaultObserver<ResponseBody>() {
+        override fun onNext(t: ResponseBody) {
+            Log.d("API_TESTING", "ShareFileObserver.onNext; $t")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d("API_TESTING", "ShareFileObserver.onError; $e")
+        }
+
+        override fun onComplete() {
+            Log.d("API_TESTING", "ShareFileObserver.onComplete")
+        }
+    }
+
+    class DownloadFileObserver(var filesPath: File): DefaultObserver<Response<ResponseBody>>() { // TODO: changed return type to Response so headers can be retrieved
+        override fun onNext(t: Response<ResponseBody>) {
+            Log.d("API_TESTING", "DownloadFileObserver.onNext; $t")
+
+            //val decryptedFile = File(filesPath, UUID.randomUUID().toString() + ".zip")
+
+            Log.d("RETROFIT_TEST", t.headers()["Content-Disposition"].toString())
+
+            val patternMatcher = Regex(".+filename=\"(.+?)\".*").toPattern().matcher(t.headers()["Content-Disposition"].toString())
+            patternMatcher.find()
+            //Log.d("RETROFIT_TEST", patternMatcher.group(1))
+            val filename = patternMatcher.group(1)
+            val decryptedFile = File(filesPath, filename + ".zip")
+            // TODO: get filename from headers
+            decryptedFile.outputStream().apply {
+                //write(t.bytes())
+                write(t.body()?.bytes())
+                flush()
+                close()
+            }
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d("API_TESTING", "DownloadFileObserver.onError; $e")
+        }
+
+        override fun onComplete() {
+            Log.d("API_TESTING", "DownloadFileObserver.onComplete")
         }
     }
 }
