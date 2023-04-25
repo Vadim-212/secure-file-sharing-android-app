@@ -1,12 +1,14 @@
 package com.vadim212.securityfilesharingapp.domain.usecase
 
-import com.vadim212.securityfilesharingapp.data.FileKey
+import com.vadim212.securityfilesharingapp.data.entity.FileKeyEntity
 import com.vadim212.securityfilesharingapp.data.repository.FileSharingRepository
+import com.vadim212.securityfilesharingapp.domain.FileKey
 import com.vadim212.securityfilesharingapp.domain.base.BaseNetworkUseCase
 import io.reactivex.rxjava3.core.Observable
+import javax.inject.Inject
 
-class GetFileKey(var fileSharingRepository: FileSharingRepository): BaseNetworkUseCase<FileKey, GetFileKey.Companion.Params>() {
-
+class GetFileKey @Inject constructor(var fileSharingRepository: FileSharingRepository) :
+    BaseNetworkUseCase<FileKey, GetFileKey.Companion.Params>() {
     override fun buildUseCaseObservable(params: Params): Observable<FileKey> {
         return this.fileSharingRepository.initiateGetFileKey(params.senderUserId, params.recipientUserId)
     }

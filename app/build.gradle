@@ -1,16 +1,18 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
     namespace 'com.vadim212.securityfilesharingapp'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.vadim212.securityfilesharingapp"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -46,7 +48,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
-
+    // Navigation component
     def nav_version = "2.5.3"
     // Java language implementation
     // implementation "androidx.navigation:navigation-fragment:$nav_version"
@@ -81,4 +83,10 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
+    // Dagger
+    implementation 'com.google.dagger:dagger:2.45'
+    kapt 'com.google.dagger:dagger-compiler:2.45'
+
+    // ZXing Android Embedded
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 }

@@ -1,12 +1,14 @@
 package com.vadim212.securityfilesharingapp.domain.usecase
 
-import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import com.vadim212.securityfilesharingapp.data.entity.UserPublicKeyEntity
 import com.vadim212.securityfilesharingapp.data.repository.UserPublicKeyRepository
+import com.vadim212.securityfilesharingapp.domain.UserPublicKey
 import com.vadim212.securityfilesharingapp.domain.base.BaseNetworkUseCase
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.ResponseBody
+import javax.inject.Inject
 
-class PostUserPublicKey(var userPublicKeyRepository: UserPublicKeyRepository):
+class PostUserPublicKey @Inject constructor(var userPublicKeyRepository: UserPublicKeyRepository):
     BaseNetworkUseCase<ResponseBody, PostUserPublicKey.Companion.Params>() {
 
     override fun buildUseCaseObservable(params: Params): Observable<ResponseBody> {

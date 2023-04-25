@@ -1,13 +1,13 @@
 package com.vadim212.securityfilesharingapp.data.api
 
-import com.vadim212.securityfilesharingapp.data.FileKey
-import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import com.vadim212.securityfilesharingapp.data.entity.FileKeyEntity
+import com.vadim212.securityfilesharingapp.data.entity.UserPublicKeyEntity
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -17,17 +17,17 @@ import retrofit2.http.Streaming
 
 interface ApiInterface {
     @POST("user_pbkey")
-    fun postUserPbKey(@Body body: UserPublicKey): Observable<Response<ResponseBody>>
+    fun postUserPbKey(@Body body: UserPublicKeyEntity): Observable<Response<ResponseBody>>
 
     @GET("user_pbkey")
-    fun getUserPbKey(@Query("user_id") userId: String): Observable<Response<UserPublicKey>>
+    fun getUserPbKey(@Query("user_id") userId: String): Observable<Response<UserPublicKeyEntity>>
 
     @Multipart
     @POST("share_file")
-    fun shareFile(@Part("sender_user_id") senderUserId: String,
-                  @Part("recipient_user_id") recipientUserId: String,
+    fun shareFile(@Part("sender_user_id") senderUserId: RequestBody,
+                  @Part("recipient_user_id") recipientUserId: RequestBody,
                   @Part encryptedFile: MultipartBody.Part,
-                  @Part("encrypted_file_key") encryptedFileKey: String): Observable<Response<ResponseBody>>
+                  @Part("encrypted_file_key") encryptedFileKey: RequestBody): Observable<Response<ResponseBody>>
 
     @GET("download_file")
     @Streaming
@@ -36,5 +36,5 @@ interface ApiInterface {
 
     @GET("file_key")
     fun getFileKey(@Query("sender_user_id") senderUserId: String,
-                   @Query("recipient_user_id") recipientUserId: String): Observable<Response<FileKey>>
+                   @Query("recipient_user_id") recipientUserId: String): Observable<Response<FileKeyEntity>>
 }

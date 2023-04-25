@@ -1,9 +1,10 @@
 package com.vadim212.securityfilesharingapp.data.api
 
-import com.vadim212.securityfilesharingapp.data.FileKey
-import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import com.vadim212.securityfilesharingapp.data.entity.FileKeyEntity
+import com.vadim212.securityfilesharingapp.data.entity.UserPublicKeyEntity
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -14,19 +15,19 @@ class ApiImplementation() : ApiInterface {
         api = ApiConnection().initializeApi()
     }
 
-    override fun postUserPbKey(body: UserPublicKey): Observable<Response<ResponseBody>> {
+    override fun postUserPbKey(body: UserPublicKeyEntity): Observable<Response<ResponseBody>> {
         return api.postUserPbKey(body)
     }
 
-    override fun getUserPbKey(userId: String): Observable<Response<UserPublicKey>> {
+    override fun getUserPbKey(userId: String): Observable<Response<UserPublicKeyEntity>> {
         return api.getUserPbKey(userId)
     }
 
     override fun shareFile(
-        senderUserId: String,
-        recipientUserId: String,
+        senderUserId: RequestBody,
+        recipientUserId: RequestBody,
         encryptedFile: MultipartBody.Part,
-        encryptedFileKey: String
+        encryptedFileKey: RequestBody
     ): Observable<Response<ResponseBody>> {
         return api.shareFile(senderUserId, recipientUserId, encryptedFile, encryptedFileKey)
     }
@@ -41,7 +42,7 @@ class ApiImplementation() : ApiInterface {
     override fun getFileKey(
         senderUserId: String,
         recipientUserId: String
-    ): Observable<Response<FileKey>> {
+    ): Observable<Response<FileKeyEntity>> {
         return api.getFileKey(senderUserId, recipientUserId)
     }
 }

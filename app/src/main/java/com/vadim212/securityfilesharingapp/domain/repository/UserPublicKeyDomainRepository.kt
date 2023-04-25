@@ -1,6 +1,7 @@
 package com.vadim212.securityfilesharingapp.domain.repository
 
-import com.vadim212.securityfilesharingapp.data.UserPublicKey
+import com.vadim212.securityfilesharingapp.data.entity.UserPublicKeyEntity
+import com.vadim212.securityfilesharingapp.domain.UserPublicKey
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.ResponseBody
 
