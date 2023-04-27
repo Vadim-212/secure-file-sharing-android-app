@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.view.fragment.FileSelectionFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:id="@+id/ttttt"/>
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="@string/hello_blank_fragment"-->
+<!--        android:id="@+id/ttttt"/>-->
 
-</FrameLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="User:"
+        android:id="@+id/textview_fragment_file_selection_user_label"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textview_fragment_file_selection_user_label"
+        android:text="123123321"
+        android:layout_marginStart="10dp"
+        android:id="@+id/textview_fragment_file_selection_user_value"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_fragment_file_selection_user_value"
+        android:text="Select files"
+        android:id="@+id/button_fragment_file_selection_file_picker"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/textview_fragment_file_selection_user_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Selected files:"
+        android:layout_marginTop="25dp"
+        android:id="@+id/textview_fragment_file_selection_files_label"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/textview_fragment_file_selection_files_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="456564564"
+        android:layout_marginTop="10dp"
+        android:id="@+id/textview_fragment_file_selection_files_list"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="100dp"
+        android:text="Next"
+        android:id="@+id/button_fragment_file_selection_next_button"
+        app:icon="@drawable/baseline_navigate_next_24"
+        app:iconGravity="end"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

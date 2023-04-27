@@ -46,6 +46,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="25dp"
         android:id="@+id/button_fragment_user_entry_next_button"
-        android:text="Next"/>
+        android:text="Next"
+        app:icon="@drawable/baseline_navigate_next_24"
+        app:iconGravity="end"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

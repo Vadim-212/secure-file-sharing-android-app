@@ -43,6 +43,12 @@ class HomeFragment : BaseFragment(), BaseView {
         }
     }
 
+    override fun initializeViews() { }
+
+    fun checkFirstRun() {
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
