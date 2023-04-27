@@ -10,4 +10,6 @@ The project uses:
   - RxJava
   - RxAndroid
 - Dagger
-- ZXing Android Embedded
+- [ZXing Android Embedded](https://github.com/journeyapps/zxing-android-embedded)
+- Jetpack DataStore
+- [Material Dialogs](https://github.com/afollestad/material-dialogs/)

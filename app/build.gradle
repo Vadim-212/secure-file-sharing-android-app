@@ -89,4 +89,12 @@ dependencies {
 
     // ZXing Android Embedded
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    // Jetpack DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // RxJava3 support
+    implementation "androidx.datastore:datastore-preferences-rxjava3:1.0.0"
+
+    // Material Dialogs
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
 }
