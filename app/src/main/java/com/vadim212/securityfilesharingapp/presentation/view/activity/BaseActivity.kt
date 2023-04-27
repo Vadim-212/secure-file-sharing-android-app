@@ -1,6 +1,5 @@
 package com.vadim212.securityfilesharingapp.presentation.view.activity
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.vadim212.securityfilesharingapp.AndroidApplication
@@ -13,9 +12,9 @@ abstract class BaseActivity: AppCompatActivity() {
         this.getApplicationComponent().inject(this)
     }
 
-    protected fun getApplicationComponent(): ApplicationComponent {
+    /*protected*/ fun getApplicationComponent(): ApplicationComponent {
         return (application as AndroidApplication).getApplicationComponent()
     }
 
-    protected fun getActivityModule(): ActivityModule = ActivityModule(this)
+    /*protected*/ fun getActivityModule(): ActivityModule = ActivityModule(this)
 }

@@ -12,7 +12,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import javax.inject.Inject
 
-class ShareFile @Inject constructor(var fileSharingRepository: FileSharingRepository): BaseNetworkUseCase<ResponseBody, ShareFile.Companion.Params>() {
+class ShareFile @Inject constructor(private var fileSharingRepository: FileSharingRepository): BaseNetworkUseCase<ResponseBody, ShareFile.Companion.Params>() {
 
     override fun buildUseCaseObservable(params: Params): Observable<ResponseBody> {
         return this.fileSharingRepository.initiateShareFile(params.senderUserId, params.recipientUserId, params.encryptedFile, params.encryptedFileKey)

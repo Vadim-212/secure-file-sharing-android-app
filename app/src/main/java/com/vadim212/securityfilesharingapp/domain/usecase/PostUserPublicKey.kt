@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Observable
 import okhttp3.ResponseBody
 import javax.inject.Inject
 
-class PostUserPublicKey @Inject constructor(var userPublicKeyRepository: UserPublicKeyRepository):
+class PostUserPublicKey @Inject constructor(private var userPublicKeyRepository: UserPublicKeyRepository):
     BaseNetworkUseCase<ResponseBody, PostUserPublicKey.Companion.Params>() {
 
     override fun buildUseCaseObservable(params: Params): Observable<ResponseBody> {

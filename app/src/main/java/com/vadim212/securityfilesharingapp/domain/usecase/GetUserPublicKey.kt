@@ -7,7 +7,7 @@ import com.vadim212.securityfilesharingapp.domain.base.BaseNetworkUseCase
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
-class GetUserPublicKey @Inject constructor(var userPublicKeyRepository: UserPublicKeyRepository) :
+class GetUserPublicKey @Inject constructor(private var userPublicKeyRepository: UserPublicKeyRepository) :
     BaseNetworkUseCase<UserPublicKey, GetUserPublicKey.Companion.Params>() {
 
     override fun buildUseCaseObservable(params: Params): Observable<UserPublicKey> {

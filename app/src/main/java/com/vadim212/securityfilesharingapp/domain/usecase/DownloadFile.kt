@@ -9,7 +9,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import javax.inject.Inject
 
-class DownloadFile @Inject constructor(var fileSharingRepository: FileSharingRepository): BaseNetworkUseCase<DownloadedFile, DownloadFile.Companion.Params>() {
+class DownloadFile @Inject constructor(private var fileSharingRepository: FileSharingRepository): BaseNetworkUseCase<DownloadedFile, DownloadFile.Companion.Params>() {
 
     override fun buildUseCaseObservable(params: Params): Observable<DownloadedFile> { // TODO: changed return type to Response so headers can be retrieved
         return this.fileSharingRepository.initiateDownloadFile(params.senderUserId, params.recipientUserId)

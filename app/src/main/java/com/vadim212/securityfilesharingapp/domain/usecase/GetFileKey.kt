@@ -7,7 +7,7 @@ import com.vadim212.securityfilesharingapp.domain.base.BaseNetworkUseCase
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
-class GetFileKey @Inject constructor(var fileSharingRepository: FileSharingRepository) :
+class GetFileKey @Inject constructor(private var fileSharingRepository: FileSharingRepository) :
     BaseNetworkUseCase<FileKey, GetFileKey.Companion.Params>() {
     override fun buildUseCaseObservable(params: Params): Observable<FileKey> {
         return this.fileSharingRepository.initiateGetFileKey(params.senderUserId, params.recipientUserId)
