@@ -36,5 +36,20 @@
         <argument
             android:name="userId"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_fileSelectionFragment_to_sendingFilesFragment"
+            app:destination="@id/sendingFilesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendingFilesFragment"
+        android:name="com.vadim212.securityfilesharingapp.presentation.view.fragment.SendingFilesFragment"
+        android:label="fragment_sending_files"
+        tools:layout="@layout/fragment_sending_files">
+        <argument
+            android:name="userId"
+            app:argType="string"/>
+        <argument
+            android:name="filesUrisString"
+            app:argType="string"/>
     </fragment>
 </navigation>
