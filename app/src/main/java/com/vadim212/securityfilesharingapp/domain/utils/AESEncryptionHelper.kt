@@ -16,4 +16,6 @@ class AESEncryptionHelper(): SymmetricEncryptionHelper {
         cipher.init(Cipher.DECRYPT_MODE, secretKey, IvParameterSpec(initializationVector))
         return cipher.doFinal(dataBytes)
     }
+
+    fun getBlockSize(): Int = cipher.blockSize
 }

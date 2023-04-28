@@ -23,15 +23,23 @@ class FilesHelper(private val context: Context, private val contentResolver: Con
         return Base64.decode(filename.split("_").last(), Base64.DEFAULT)
     }
 
-    fun saveBytesToFileDir(dataBytes: ByteArray, filename: String, contextWrapperDir: String) {
-        val fileToWriteDir = ContextWrapper(context)
-            .getDir(contextWrapperDir, Context.MODE_PRIVATE)
-        val decryptedFile = File(fileToWriteDir, filename)
+    fun saveBytesToFileDir(dataBytes: ByteArray, filename: String, fileSaveDir: File) {//, contextWrapperDir: String) {
+        //val fileToWriteDir = ContextWrapper(context)
+        //    .getDir(contextWrapperDir, Context.MODE_PRIVATE)
+        val decryptedFile = File(fileSaveDir, filename)
         decryptedFile.outputStream().apply {
             write(dataBytes)
             flush()
             close()
         }
+    }
+
+    fun getBytesFromFile(file: File): ByteArray {
+        return file.inputStream().readBytes()
+    }
+
+    fun getBytesFromFilePath(filePath: String): ByteArray {
+        return File(filePath).inputStream().readBytes()
     }
 
     fun readBytesFromUri(uri: Uri): ByteArray{
@@ -41,4 +49,5 @@ class FilesHelper(private val context: Context, private val contentResolver: Con
         }
         return bytes!!
     }
+
 }

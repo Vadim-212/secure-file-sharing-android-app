@@ -166,7 +166,7 @@ class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublic
 
 
 
-    fun initializeInjector() {
+    private fun initializeInjector() {
         this.userPublicKeyComponent = DaggerUserPublicKeyComponent.builder()
             .applicationComponent((activity as BaseActivity).getApplicationComponent())
             .activityModule((activity as BaseActivity).getActivityModule())

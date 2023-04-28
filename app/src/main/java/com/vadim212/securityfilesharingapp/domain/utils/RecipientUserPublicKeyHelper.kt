@@ -12,7 +12,7 @@ import com.vadim212.securityfilesharingapp.domain.UserPublicKey
 
 class RecipientUserPublicKeyHelper(private val context: Context): Helper {
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
+        //private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
         private const val RECIPIENT_PUBLIC_KEY_KEY = "recipient_user_public_key"
     }
 

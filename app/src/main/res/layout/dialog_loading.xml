@@ -10,8 +10,6 @@
         android:indeterminate="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
         android:indeterminateTint="@color/purple_500"
         android:id="@+id/progressindicator_dialog_loading"/>
 
@@ -21,7 +19,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/progressindicator_dialog_loading"
         android:text="Loading..."
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="25dp"/>
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="20dp"
+        android:id="@+id/textview_dialog_loading_text"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

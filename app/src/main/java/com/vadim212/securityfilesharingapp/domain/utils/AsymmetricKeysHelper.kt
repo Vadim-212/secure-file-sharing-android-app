@@ -35,7 +35,7 @@ class AsymmetricKeysHelper: Helper {
         }
     }
 
-    fun stringToPublicKey(publicKeyBase64String: String): PublicKey {
+    fun base64StringToPublicKey(publicKeyBase64String: String): PublicKey {
         val bytes = Base64.decode(publicKeyBase64String, Base64.DEFAULT)
         val x509KeySpec = X509EncodedKeySpec(bytes)
         val keyFactory = KeyFactory.getInstance(EncryptionConstants.RSA_ALGORITHM_NAME)
