@@ -13,7 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-#/app/src/main/java/com/vadim212/securityfilesharingapp/
+#/app/src/main/java/com/vadim212/securefilesharingapp/
 /test_files/
 
 # Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio

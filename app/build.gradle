@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.vadim212.securityfilesharingapp'
+    namespace 'com.vadim212.securefilesharingapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.vadim212.securityfilesharingapp"
+        applicationId "com.vadim212.securefilesharingapp"
         minSdk 24
         targetSdk 33
         versionCode 1
