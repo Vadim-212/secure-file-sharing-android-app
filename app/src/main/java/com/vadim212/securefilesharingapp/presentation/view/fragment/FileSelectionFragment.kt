@@ -18,7 +18,6 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.vadim212.securefilesharingapp.databinding.FragmentFileSelectionBinding
-import com.vadim212.securefilesharingapp.domain.utils.FilePathHelper
 import com.vadim212.securefilesharingapp.domain.utils.FilesHelper
 import com.vadim212.securefilesharingapp.domain.utils.getFileName
 import com.vadim212.securefilesharingapp.presentation.view.BaseView

@@ -12,7 +12,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.vadim212.securefilesharingapp.R
 import com.vadim212.securefilesharingapp.databinding.FragmentSendingFilesBinding
-import com.vadim212.securefilesharingapp.domain.utils.*
 import com.vadim212.securefilesharingapp.presentation.di.HasComponent
 import com.vadim212.securefilesharingapp.presentation.di.components.DaggerShareFileComponent
 import com.vadim212.securefilesharingapp.presentation.di.components.ShareFileComponent
