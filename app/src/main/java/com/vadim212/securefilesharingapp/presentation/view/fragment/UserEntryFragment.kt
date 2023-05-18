@@ -45,7 +45,7 @@ class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublic
             val uuidPattern = Pattern.compile(UUID_PATTERN_STRING)
             val uuidPatternMatcher = uuidPattern.matcher(result.contents)
             if (uuidPatternMatcher.matches()) {
-                binding.edittextFragmentUserEntryUserIdInput.setText(result.contents)
+                binding.textfieldFragmentUserEntryUserIdInput.editText?.setText(result.contents)
             } else {
                 this.showToastMessage("Error! It's not UUID")
             }
@@ -93,7 +93,7 @@ class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublic
         }
 
         binding.buttonFragmentUserEntryNextButton.setOnClickListener {
-            val userId = binding.edittextFragmentUserEntryUserIdInput.text.toString()
+            val userId = binding.textfieldFragmentUserEntryUserIdInput.editText?.text.toString()
 
             if (userId.isEmpty()) {
                 this.showToastMessage("Error! User ID is empty")
@@ -119,7 +119,7 @@ class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublic
     }
 
     override fun onRecipientPublicKeySaved() {
-        val userId = binding.edittextFragmentUserEntryUserIdInput.text.toString()
+        val userId = binding.textfieldFragmentUserEntryUserIdInput.editText?.text.toString()
         // TODO: add regex check for user id
         val action = UserEntryFragmentDirections.actionUserEntryFragmentToFileSelectionFragment(userId)
         Navigation.findNavController(binding.root).navigate(action)

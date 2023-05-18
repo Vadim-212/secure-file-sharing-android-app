@@ -7,7 +7,7 @@
     tools:context=".presentation.view.fragment.HomeFragment">
 
     <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,12 +17,12 @@
         android:text="Send files"/>
 
     <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/button_fragment_main_send_files"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="70dp"
         android:id="@+id/button_fragment_main_receive_files"
         android:text="Receive files"/>
 
