@@ -2,6 +2,7 @@ package com.vadim212.securefilesharingapp.presentation.presenter
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import com.vadim212.securefilesharingapp.domain.base.DefaultObserver
@@ -32,14 +33,14 @@ class SendingFilesFragmentPresenter @Inject constructor(private val shareFileUse
         this.sendingFilesView = null
     }
 
-    suspend fun initialize(filesPaths: List<String>, recipientUserId: String) {
+    suspend fun initialize(filesUris: List<Uri>, recipientUserId: String) {
         this.hideViewRetry()
         this.showViewLoading()
 
         val fileToWriteDir = ContextWrapper(sendingFilesView?.context()!!)
             .getDir("encrypted_files", Context.MODE_PRIVATE)
         val zipArchivePath = File(fileToWriteDir,"archive.zip")
-        this.createZipArchive(filesPaths, zipArchivePath)
+        this.createZipArchive(filesUris, zipArchivePath)
 
         // get bytes from file
         val zipArchiveBytes = FilesHelper.getBytesFromFile(zipArchivePath)
@@ -62,7 +63,7 @@ class SendingFilesFragmentPresenter @Inject constructor(private val shareFileUse
         // encrypt
         val encodedSecretKey = RSAEncryptionHelper.encrypt(secretKeyBytes, recipientPublicKey)
         // secret key to base64 string
-        val fileKey = Base64.encodeToString(encodedSecretKey, Base64.DEFAULT)
+        val fileKey = Base64.encodeToString(encodedSecretKey, Base64.NO_WRAP)
 
         // get sender user id
         val senderUserId = UserIdHelper.getUserIdFromDataStore(this.sendingFilesView?.context()!!).first()
@@ -102,9 +103,9 @@ class SendingFilesFragmentPresenter @Inject constructor(private val shareFileUse
         this.sendingFilesView?.showError(e.message ?: e.javaClass.simpleName)
     }
 
-    private fun createZipArchive(filesPaths: List<String>, archiveSavePath: File) {
+    private fun createZipArchive(filesUris: List<Uri>, archiveSavePath: File) {
         //val savePath = File(archiveSaveDir, archiveFileName)
-        ZipFilesHelper.zipFiles(filesPaths, archiveSavePath)
+        ZipFilesHelper.zipFiles(filesUris, archiveSavePath, sendingFilesView?.context()!!.contentResolver)
     }
 
     private fun encryptFile(filepath: String) {

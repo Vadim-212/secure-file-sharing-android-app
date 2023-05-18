@@ -109,7 +109,7 @@ class HomeFragment : BaseFragment(), HomeView, HasComponent<UserPublicKeyCompone
                 UserIdHelper.saveUserIdToDataStore(userId, this@HomeFragment.requireContext())
 
                 // send new user id and public key to server
-                val publicKeyBase64 = Base64.encodeToString(newKeyPair.public.encoded, Base64.DEFAULT)
+                val publicKeyBase64 = Base64.encodeToString(newKeyPair.public.encoded, Base64.NO_WRAP)
                 this@HomeFragment.homeFragmentPresenter.initialize(UserPublicKeyModel(userId, publicKeyBase64)) // TODO: if there is ERROR with POST request then DON'T save user id to data store
                 //Looper.myLooper()?.quit()
 

@@ -49,7 +49,7 @@
             android:name="userId"
             app:argType="string"/>
         <argument
-            android:name="filesPathsString"
+            android:name="filesUrisString"
             app:argType="string"/>
     </fragment>
 </navigation>

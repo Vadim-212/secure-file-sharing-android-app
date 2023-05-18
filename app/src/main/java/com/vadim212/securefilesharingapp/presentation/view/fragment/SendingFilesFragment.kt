@@ -1,6 +1,7 @@
 package com.vadim212.securefilesharingapp.presentation.view.fragment
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -57,9 +58,12 @@ class SendingFilesFragment : BaseFragment(), SendingFilesView, HasComponent<Shar
 
         //binding.tttt.text = "${args.userId}\n\n${args.filesUrisString.split("|").joinToString("\n")}"
 
-        val filesPathsList = args.filesPathsString.split("|")
+        val filesUrisStringList = args.filesUrisString.split("|")
+        val filesUris = filesUrisStringList.map {
+            Uri.parse(it)
+        }
         CoroutineScope(Dispatchers.Main).launch {
-            this@SendingFilesFragment.sendingFilesFragmentPresenter.initialize(filesPathsList, args.userId)
+            this@SendingFilesFragment.sendingFilesFragmentPresenter.initialize(filesUris, args.userId)
         }
     }
 

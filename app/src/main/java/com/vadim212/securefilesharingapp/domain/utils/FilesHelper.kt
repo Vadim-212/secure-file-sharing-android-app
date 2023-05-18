@@ -9,7 +9,7 @@ import java.util.*
 class FilesHelper: Helper {
     companion object {
         fun generateFileNameWithUUIDAndInitializationVector(initializationVector: ByteArray): String {
-            return UUID.randomUUID().toString().replace("-","") + "_" + Base64.encodeToString(initializationVector, Base64.DEFAULT)
+            return UUID.randomUUID().toString().replace("-","") + "_" + Base64.encodeToString(initializationVector, Base64.NO_WRAP)
         }
 
         fun parseUUIDFromGeneratedFileName(filename: String): String {

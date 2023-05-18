@@ -1,5 +1,7 @@
 package com.vadim212.securefilesharingapp.domain.utils
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.util.Log
 import java.io.*
 import java.util.zip.ZipEntry
@@ -9,17 +11,18 @@ import java.util.zip.ZipOutputStream
 class ZipFilesHelper: Helper {
     companion object {
         @Throws(IOException::class)
-        fun zipFiles(files: List<String>, archiveSavePath: File) {
+        fun zipFiles(filesUris: List<Uri>, archiveSavePath: File, contentResolver: ContentResolver) {
             val BUFFER_SIZE = 6 * 1024
             var origin: BufferedInputStream? = null
             val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(archiveSavePath)))
             try {
                 val data = ByteArray(BUFFER_SIZE)
-                for (i in files.indices) {
-                    val fi = FileInputStream(files[i])
+                for (i in filesUris.indices) {
+                    val parcelFileDescriptor = contentResolver.openFileDescriptor(filesUris[i], "r")
+                    val fi = FileInputStream(parcelFileDescriptor?.fileDescriptor)
                     origin = BufferedInputStream(fi, BUFFER_SIZE)
                     try {
-                        val entry = ZipEntry(files[i].substring(files[i].lastIndexOf("/") + 1))
+                        val entry = ZipEntry(contentResolver.getFileName(filesUris[i]))
                         out.putNextEntry(entry)
                         var count = origin.read(data, 0, BUFFER_SIZE)
                         while (count != -1) {
@@ -29,6 +32,7 @@ class ZipFilesHelper: Helper {
                     } finally {
                         origin.close()
                     }
+                    parcelFileDescriptor?.close()
                 }
             } finally {
                 out.close()

@@ -2,6 +2,8 @@ package com.vadim212.securefilesharingapp.presentation.view.fragment
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -16,8 +18,12 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.vadim212.securefilesharingapp.databinding.FragmentFileSelectionBinding
+import com.vadim212.securefilesharingapp.domain.utils.FilePathHelper
+import com.vadim212.securefilesharingapp.domain.utils.FilesHelper
+import com.vadim212.securefilesharingapp.domain.utils.getFileName
 import com.vadim212.securefilesharingapp.presentation.view.BaseView
 import java.io.File
+import java.io.FileInputStream
 
 
 class FileSelectionFragment : BaseFragment(), BaseView {
@@ -47,8 +53,28 @@ class FileSelectionFragment : BaseFragment(), BaseView {
                     Log.d("FILE_PICKER_TEST", "File(uri.path).canonicalPath: ${File(uris[0].path!!).canonicalPath ?: ""}")
                     Log.d("FILE_PICKER_TEST", "File(uri.path).absolutePath: ${File(uris[0].path!!).absolutePath ?: ""}")
                     Log.d("FILE_PICKER_TEST", "File(uri.toString).path: ${File(uris[0].toString()).path ?: ""}")
-                    Log.d("FILE_PICKER_TEST", "File(uri.toString).inputStream.readBytes: ${File(uris[0].path!!).inputStream().readBytes()[1] ?: ""}")
+                    //Log.d("FILE_PICKER_TEST", "File(uri.toString).inputStream.readBytes: ${File(uris[0].path!!).inputStream().readBytes()[1] ?: ""}")
                     this.selectedFilesUris = uris
+
+//                   // Log.d("FILE_PICKER_TEST", "getPath: ${FilePathHelper.getPath(uris[0], requireActivity().applicationContext)}")
+//                    //Log.d("FILE_PICKER_TEST", "File(getPath).inputStream.readBytes: ${File(FilePathHelper.getPath(uris[0], requireActivity().applicationContext)).inputStream().readBytes()[1] ?: ""}")
+//                    val uriInputStream = FileInputStream(requireContext().contentResolver.openFileDescriptor(uris[0], "r")?.fileDescriptor)
+//                    val bytes = uriInputStream.readBytes()
+//                    Log.d("FILE_PICKER_TEST", "contentResolver: ${bytes.size}")
+//                    Log.d("FILE_PICKER_TEST", "contentResolver fileName: ${requireContext().contentResolver.getFileName(uris[0])}")
+
+
+
+//                    FilesHelper.saveBytesToFileDir(bytes,
+//                        requireContext().contentResolver.getFileName(uris[0]),
+//                        File("/storage/emulated/0/Documents"))
+//
+//                    FilesHelper.saveBytesToFileDir(bytes,
+//                        requireContext().contentResolver.getFileName(uris[0]),
+//                        ContextWrapper(context)
+//                            .getDir("encrypted_files", Context.MODE_PRIVATE))
+//
+//                    uriInputStream.close()
 
                     if (uris.isNotEmpty()) {
 //                        binding?.textviewFragmentMainFilesUriList?.text =
@@ -80,13 +106,14 @@ class FileSelectionFragment : BaseFragment(), BaseView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val permissionsStorage = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE)
-        val requestExternalStorage = 1
-        val permission =
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), permissionsStorage, requestExternalStorage)
-        }
+//        val permissionsStorage = arrayOf<String>(Manifest.permission.READ_EXTERNAL_STORAGE)
+//        val requestExternalStorage = 1
+//        val permission =
+//            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+//        if (permission != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(requireActivity(), permissionsStorage, requestExternalStorage)
+//        }
+
 
         initializeViews()
         initializeListeners()
@@ -108,11 +135,11 @@ class FileSelectionFragment : BaseFragment(), BaseView {
 
                 // Navigation
                 val userId = args.userId
-                //val filesUrisString = selectedFilesUris!!.joinToString("|")
-                val filePathsString = selectedFilesUris!!.map { uri ->
-                    File(uri.path!!).path
-                }.joinToString("|")
-                val action = FileSelectionFragmentDirections.actionFileSelectionFragmentToSendingFilesFragment(userId, filePathsString)
+                val filesUrisString = selectedFilesUris!!.joinToString("|")
+//                val filePathsString = selectedFilesUris!!.map { uri ->
+//                    File(uri.path!!).path
+//                }.joinToString("|")
+                val action = FileSelectionFragmentDirections.actionFileSelectionFragmentToSendingFilesFragment(userId, filesUrisString)
                 Navigation.findNavController(binding.root).navigate(action)
 
             } else {

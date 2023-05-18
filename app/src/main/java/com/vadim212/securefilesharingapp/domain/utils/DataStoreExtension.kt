@@ -8,11 +8,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-//class DataStoreHelper: Helper {
-//    companion object {
-//        const val PREFERENCE_NAME = "app_settings"
-//    }
-
 private val Context.dataStore by preferencesDataStore("app_settings")
 
 suspend fun Context.writeStringToDataStore(key: String, value: String) {
@@ -38,5 +33,3 @@ fun Context.readBooleanFromDataStore(key: String): Flow<Boolean> {
         preferences[booleanPreferencesKey(key)] ?: false
     }
 }
-
-//}
