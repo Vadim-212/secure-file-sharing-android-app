@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeFragment_to_userEntryFragment"
             app:destination="@id/userEntryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_myIDFragment"
+            app:destination="@id/myIDFragment" />
     </fragment>
     <fragment
         android:id="@+id/userEntryFragment"
@@ -52,4 +55,9 @@
             android:name="filesUrisString"
             app:argType="string"/>
     </fragment>
+    <fragment
+        android:id="@+id/myIDFragment"
+        android:name="com.vadim212.securefilesharingapp.presentation.view.fragment.MyIDFragment"
+        android:label="fragment_my_id"
+        tools:layout="@layout/fragment_my_id" />
 </navigation>

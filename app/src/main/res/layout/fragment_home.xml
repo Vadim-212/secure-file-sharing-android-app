@@ -26,5 +26,15 @@
         android:id="@+id/button_fragment_main_receive_files"
         android:text="Receive files"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/button_fragment_main_receive_files"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="70dp"
+        android:id="@+id/button_fragment_main_my_id"
+        android:text="My ID"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,6 +75,10 @@ class HomeFragment : BaseFragment(), HomeView, HasComponent<UserPublicKeyCompone
         binding.buttonFragmentMainReceiveFiles.setOnClickListener {
 
         }
+
+        binding.buttonFragmentMainMyId.setOnClickListener {
+            Navigation.findNavController(binding.root).navigate(R.id.action_homeFragment_to_myIDFragment)
+        }
     }
 
     override fun initializeViews() {
