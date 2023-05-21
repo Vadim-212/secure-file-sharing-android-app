@@ -57,4 +57,9 @@ class MyIDFragment : BaseFragment(), BaseView {
             binding.imageviewFragmentMyIdQr.setImageBitmap(bitmap)
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

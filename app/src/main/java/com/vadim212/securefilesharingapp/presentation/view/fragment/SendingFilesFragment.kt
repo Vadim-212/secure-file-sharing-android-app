@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -82,6 +83,7 @@ class SendingFilesFragment : BaseFragment(), SendingFilesView, HasComponent<Shar
     override fun onFileSended() {
         Log.d("SendingFilesFragmentTest", "onFileSended")
         this.showToastMessage("File sended!")
+        Navigation.findNavController(binding.root).navigate(R.id.action_sendingFilesFragment_to_homeFragment)
     }
 
     override fun showLoading() {
@@ -125,4 +127,8 @@ class SendingFilesFragment : BaseFragment(), SendingFilesView, HasComponent<Shar
         return this.shareFileComponent!!
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

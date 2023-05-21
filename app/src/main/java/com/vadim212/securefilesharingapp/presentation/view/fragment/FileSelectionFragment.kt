@@ -154,4 +154,9 @@ class FileSelectionFragment : BaseFragment(), BaseView {
         }
         filePickerLauncher.launch(intent)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.journeyapps.barcodescanner.ScanContract
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublicKeyComponent> {
     private var _binding: FragmentUserEntryBinding? = null
     private val binding get() = _binding!!
+    private val args: UserEntryFragmentArgs by navArgs()
 
     @Inject
     lateinit var userEntryFragmentPresenter: UserEntryFragmentPresenter
@@ -98,7 +100,14 @@ class UserEntryFragment : BaseFragment(), UserEntryView, HasComponent<UserPublic
             if (userId.isEmpty()) {
                 this.showToastMessage("Error! User ID is empty")
             } else {
-                this.userEntryFragmentPresenter.initialize(userId)
+                val isFileSending = args.isFileSending
+                if (isFileSending) {
+                    this.userEntryFragmentPresenter.initialize(userId)
+                } else {
+                    // TODO: add regex check for user id
+                    val action = UserEntryFragmentDirections.actionUserEntryFragmentToReceivingFilesFragment(userId)
+                    Navigation.findNavController(binding.root).navigate(action)
+                }
             }
         }
     }

@@ -69,11 +69,15 @@ class HomeFragment : BaseFragment(), HomeView, HasComponent<UserPublicKeyCompone
 
     override fun initializeListeners() {
         binding.buttonFragmentMainSendFiles.setOnClickListener {
-            Navigation.findNavController(binding.root).navigate(R.id.action_homeFragment_to_userEntryFragment)
+            val isFileSending = true
+            val action = HomeFragmentDirections.actionHomeFragmentToUserEntryFragment(isFileSending)
+            Navigation.findNavController(binding.root).navigate(action)
         }
 
         binding.buttonFragmentMainReceiveFiles.setOnClickListener {
-
+            val isFileSending = false
+            val action = HomeFragmentDirections.actionHomeFragmentToUserEntryFragment(isFileSending)
+            Navigation.findNavController(binding.root).navigate(action)
         }
 
         binding.buttonFragmentMainMyId.setOnClickListener {

@@ -27,6 +27,9 @@
         android:name="com.vadim212.securefilesharingapp.presentation.view.fragment.UserEntryFragment"
         android:label="fragment_user_entry"
         tools:layout="@layout/fragment_user_entry" >
+        <argument
+            android:name="isFileSending"
+            app:argType="boolean"/>
         <action
             android:id="@+id/action_userEntryFragment_to_fileSelectionFragment"
             app:destination="@id/fileSelectionFragment" />
@@ -54,6 +57,9 @@
         <argument
             android:name="filesUrisString"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_sendingFilesFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/myIDFragment"
