@@ -1,8 +1,10 @@
 package com.vadim212.securefilesharingapp.domain.utils
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -74,6 +76,40 @@ class ZipFilesHelper: Helper {
                     }
 
                 } finally {
+                    zin.close()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("ZIP", "Unzip exception", e)
+            }
+        }
+
+        @Throws(IOException::class)
+        fun unzipFilesToUri(archivePath: File, saveDirUri: Uri, context: Context) {
+            try {
+                val dir = DocumentFile.fromTreeUri(context, saveDirUri)
+                val zin = ZipInputStream(FileInputStream(archivePath))
+                try {
+                    var ze = zin.nextEntry
+                    while (ze != null) {
+                        val file = dir?.createFile("text/*", ze.name)
+                        val parcelFileDescriptor =
+                            context.contentResolver.openFileDescriptor(file?.uri!!, "w")
+                        val fout = FileOutputStream(parcelFileDescriptor?.fileDescriptor)
+                        fout.apply {
+                            write(zin.readBytes())
+                            flush()
+                            close()
+                        }
+                        ze = zin.nextEntry
+                        parcelFileDescriptor?.close()
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("ZIP", "Unzip (ZipInputStream) exception", e)
+                }
+                finally {
                     zin.close()
                 }
             } catch (e: Exception) {
