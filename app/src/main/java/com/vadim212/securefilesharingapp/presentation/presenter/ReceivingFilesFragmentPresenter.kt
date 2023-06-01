@@ -179,7 +179,8 @@ class ReceivingFilesFragmentPresenter @Inject constructor(private val downloadFi
 
     private inner class GetFileKeyObserver: DefaultObserver<FileKey>() {
         override fun onNext(t: FileKey) {
-           this@ReceivingFilesFragmentPresenter.decryptFile(t)
+            this@ReceivingFilesFragmentPresenter.onFileDownloaded()
+            this@ReceivingFilesFragmentPresenter.decryptFile(t)
         }
 
         override fun onError(e: Throwable) {
@@ -190,7 +191,7 @@ class ReceivingFilesFragmentPresenter @Inject constructor(private val downloadFi
 
         override fun onComplete() {
             //this@ReceivingFilesFragmentPresenter.hideViewLoading()
-            this@ReceivingFilesFragmentPresenter.onFileDownloaded()
+            //this@ReceivingFilesFragmentPresenter.onFileDownloaded()
         }
     }
 }

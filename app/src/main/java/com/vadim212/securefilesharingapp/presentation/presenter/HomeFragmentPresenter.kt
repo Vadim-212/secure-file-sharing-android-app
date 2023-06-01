@@ -57,9 +57,6 @@ class HomeFragmentPresenter @Inject constructor(private val postUserPublicKeyUse
     }
 
     private inner class PostUserPublicKeyObserver: DefaultObserver<ResponseBody>() {
-        override fun onNext(t: ResponseBody) {
-            super.onNext(t)
-        }
 
         override fun onError(e: Throwable) {
             this@HomeFragmentPresenter.hideViewLoading()
